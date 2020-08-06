@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+@using SiraTakipSistemi.Models
+@{ 
+    Kullanici k = Session["Kullanici"] as Kullanici;
+    dbcontext db = new dbcontext();
+    List<SeferListesi> seferler = db.SeferListesi.Where(x => x.Company.Id == k.Company.Id).ToList();
+    var anliksefer = seferler.Where(x => x.IsActive == 1).ToList().Count;
+    var gecmis = seferler.Where(x => x.IsActive == 0).ToList().Count;
+}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="~/plugins/jqvmap/jqvmap.min.css">
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="~/plugins/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="~/plugins/toastr/toastr.min.css">
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script>$.widget.bridge('uibutton', $.ui.button)</script>
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/plugins/sparklines/sparkline.js"></script>
+    <script src="~/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="~/dist/js/adminlte.js"></script>
+    <script src="~/dist/js/demo.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.min.js"></script>
+    <link rel="stylesheet" href="~/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="~/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link href="~/Content/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
+    <script src="~/plugins/select2/js/select2.full.min.js"></script>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+
+
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <!-- Messages Dropdown Menu -->
+                <!-- Notifications Dropdown Menu
+    <li class="nav-item dropdown" style="padding-top: 7%;">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-bell"></i>
+            <span class="badge badge-warning navbar-badge">15</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <span class="dropdown-item dropdown-header">15 Notifications</span>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+                <i class="fas fa-envelope mr-2"></i> 4 new messages
+                <span class="float-right text-muted text-sm">3 mins</span>
+            </a>
+
+        </div>
+    </li>-->
+
+                <li >
+                    <div class="user-panel mt-1 pb-2 pr-3 mb-1 d-flex" style="width: 100% !important;">
+                        <div class="image">
+                            <img class="img-circle elevation-2" src="~/images/user.png" width="32px" height="32px" alt="User Image">
+                        </div>
+                        <div class="info" style="display: flex;">
+                            <a style="color:deepskyblue" class="d-block">@k.Ad</a>
+                            <a class="d-block" href="/SiraTakip/Cikis"><img src="https://img.icons8.com/cute-clipart/100/000000/exit.png" /></a>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a href="/Anasayfa/SiraListesi" class="brand-link">
+                <img src="~/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                     style="opacity: .8">
+                <span class="brand-text font-weight-light">Araç Takip Sistemi</span>
+            </a>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img  class="img-circle elevation-2" src="~/images/company.png" width="32px" height="32px" alt="User Image">
+                    </div>
+                    <div class="info" style="white-space: normal;">
+                        <a href="#" class="d-block">@k.Company.FirmaAdi </a>
+                        <a href="#" class="d-block">Firma Kodu: @k.Company.FirmaId </a>
+                    </div>
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <!-- Add icons to the links using the .nav-icon class
+         with font-awesome or any other icon font library -->
+                        <li class="nav-header" style="padding-left: 20px;">Sıra İşlemleri</li>
+                        <li class="nav-item" style="padding-left: 2px;">
+                            <a href="/Anasayfa/SiraListesi" class="nav-link">
+                                <i class="nav-icon fas fa-truck" style="color:#03d3fc"></i>
+                                <p>
+                                    Anlık Sıra Listesi
+                                    <span class="badge badge-info right">@anliksefer</span>
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item" style="padding-left: 2px;">
+                            <a href="/Anasayfa/SiraGecmisi" class="nav-link">
+                                <i class="nav-icon far fa-calendar-alt" style="color:#03d3fc"></i>
+                                <p>
+                                    Sıra Geçmişi
+                                    <span class="badge badge-info right">@gecmis</span>
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Şöför İşlemleri</li>
+                        <li class="nav-item">
+                            <a href="/Anasayfa/Soforler" class="nav-link">
+                                <i class="nav-icon fa fa-user" style="color:#03d3fc"></i>
+                                <p>
+                                    Şöför Ekle - Çıkar
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Kullanıcı İşlemleri</li>
+                        <li class="nav-item">
+                            <a href="/Anasayfa/Kullanici" class="nav-link">
+                                <i class="nav-icon fa fa-lock" style="color:#03d3fc"></i>
+                                <p>
+                                    Kullanıcı Ekle - Çıkar
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- /.sidebar-menu -->
+            </div>
+            <!-- /.sidebar -->
+        </aside>
+
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+    
+
+
+            <script type="text/javascript">
+                function Mesaj(data) {
+                    if (data.Status == 1) {
+                         toastr.success(data.Mesaj, data.Baslik);
+                    } else {
+                         toastr.error(data.Mesaj, data.Baslik);
+                    }
+                }
+
+            </script>
+
+
+
+            <div>
+                @RenderBody()
+            </div>
+
+
+
+
+
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2020 ŞAHİN TEKNOLOJİ.</strong>
+            All rights reserved.
+
+        </footer>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+
+
+</body>
+</html>

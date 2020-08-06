@@ -1,0 +1,112 @@
+﻿@model List<SiraTakipSistemi.Models.SeferListesi>
+@using SiraTakipSistemi.Models
+@{
+    ViewBag.Title = "SiraGecmisi";
+    Layout = "~/Views/Shared/_Home.cshtml";
+}
+<script src="~/plugins/moment/moment.min.js"></script>
+<script src="~/plugins/daterangepicker/daterangepicker.js"></script>
+<link rel="stylesheet" href="~/plugins/daterangepicker/daterangepicker.css">
+<section class="content">
+    <div class="container-fluid">
+        @using (Ajax.BeginForm("SiraGecmisi", "Anasayfa", new AjaxOptions { UpdateTargetId = "gecmistablosu", HttpMethod = "GET" }, new { id = "seferform" }))
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Şöför Seçin</label>
+                        <select class="form-control select2 select2-danger" name="Soforid" data-dropdown-css-class="select2-danger" style=" width: 100%; height: 100px !important">
+                            <option value="0">Bütün Şöförler</option>
+                            @foreach (var item in TempData["Soforler"] as List<Sofor>)
+                            {
+                                <option value="@item.Id">@item.Plaka - @item.Ad</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label>Tarih Aralığı:</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right" name="tarih" id="reservation">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2" style="padding-top: 2%;">
+                    <button type="submit" class="btn btn-block btn-outline-primary">Tabloda Ara</button>
+                </div>  
+                <div class="col-md-2" style="padding-top: 2%;">
+                    @Ajax.ActionLink("Filtreyi Temizle", "SiraGecmisi", new { Soforid = 0, tarih = "" }, new AjaxOptions { UpdateTargetId = "gecmistablosu", HttpMethod = "GET" }, new { @class = "btn btn-outline-danger" })
+                </div>
+            </div>
+        }
+
+        <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 padding10" id="gecmistablosu">
+
+                @Html.Partial("_SeferGecmisTablosu", Model)
+
+            </div>
+            <br />
+
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    $(function () {
+        $('.select2').select2();
+      
+        $('#reservation').daterangepicker({
+        "showDropdowns": true,
+        "autoApply": true,
+        "locale": {
+            "format": "DD/MM/YYYY",
+            "separator": " - ",
+            "applyLabel": "Apply",
+            "cancelLabel": "Cancel",
+            "fromLabel": "From",
+            "toLabel": "To",
+            "customRangeLabel": "Custom",
+            "weekLabel": "W",
+            "daysOfWeek": [
+                "Pzr",
+                "Pzrts",
+                "Salı",
+                "Crs",
+                "Per",
+                "Cuma",
+                "Cumrt"
+            ],
+            "monthNames": [
+                "Ocak",
+                "Şubat",
+                "Mart",
+                "Mayıs",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+            ],
+            "firstDay": 1
+        },
+        "startDate": "01/01/2019",
+        "endDate": "01/01/2022"
+    }, function(start, end, label) {
+      console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+    });
+
+    });
+
+</script>

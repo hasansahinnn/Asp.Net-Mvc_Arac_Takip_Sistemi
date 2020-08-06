@@ -1,0 +1,29 @@
+﻿@model List<SiraTakipSistemi.Models.SeferListesi>
+
+<table id="tblLocations" class="table- " cellpadding="0" cellspacing="0" border="1">
+    <tr>
+        <th>Plaka - Ad</th>
+        <th>Not</th>
+        <th>Kayıt Tarihi</th>
+        <th>İşlemler</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr id="sirarow-@item.Id">
+            <td style="display:none">@item.Id</td>
+            <td width="15%">@item.Sofor.Plaka - @item.Sofor.Ad</td>
+            <td>@item.Not</td>
+            <td width="15%">@item.SeferZamani</td>
+            <td width="25%">
+                <a class="btn btn-outline-danger" data-ajax="true" data-ajax-failure="SatirSil" data-ajax-method="POST" data-ajax-success="SatirSil" href="/Anasayfa/SiraSil?seferid=@item.Id">Kaydı Sil</a>
+            </td>
+        </tr>
+    }
+
+</table>
+<script type="text/javascript">
+       function SatirSil(data) {
+        $("#sirarow-" + data.Ek).html('');
+        Mesaj(data);
+    }
+</script>

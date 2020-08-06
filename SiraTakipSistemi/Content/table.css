@@ -1,0 +1,32 @@
+﻿
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid darkgray;
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.padding10 {
+    padding: 10px;
+    max-height: 680px;
+    overflow-y: auto;
+    height: 100%;
+    overflow-x: auto;
+}
+
+.select2-selection .select2-selection--single {
+    height: 38px !important;
+}
+.container-fluid {
+    padding-right: 27.5px !important;
+    padding-left: 27.5px !important;
+}

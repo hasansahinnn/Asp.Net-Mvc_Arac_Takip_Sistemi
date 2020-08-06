@@ -1,0 +1,43 @@
+﻿@model List<SiraTakipSistemi.Models.Kullanici>
+<div class="row">
+    <div class="col-md-12 col-sm-12 ">
+        <h2 style="text-align:center">Şöför Listesi</h2><br />
+    </div>
+    <div class="col-md-12 col-sm-12" style="text-align:right">
+        <button onclick="clearModal()" class="btn btn-primary" data-toggle="modal" data-target="#KullaniciModal"><i class="fa fa-plus"></i> Kullanıcı Ekle</button>
+    </div>
+    <div class="col-md-12 col-sm-12 padding10" id="Kullanicitablosu">
+        <table id="Kullanicitablo" class="table" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <th>Ad</th>
+                <th>Kullanıcı Adı</th>
+                <th>Şifre</th>
+                <th>Kullanici İşlemleri</th>
+            </tr>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td>KAYIT YOK</td>
+                    <td>KAYIT YOK</td>
+                    <td>KAYIT YOK</td>
+                    <td>KAYIT YOK</td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr id="sirarow-@item.Id">
+                    <td style="display:none">@item.Id</td>
+                    <td width="15">@item.Ad</td>
+                    <td width="15%">@item.Username</td>
+                    <td width="15%">@item.Sifre</td>
+                    <td width="25%">
+                        @Ajax.ActionLink("Kullanıcıyı Sil", "KullaniciActive", new { Kullaniciid = item.Id, Active = -1 }, new AjaxOptions { UpdateTargetId = "Kullanicitablosu", HttpMethod = "GET" }, new { @class = "btn btn-outline-danger" })
+                        <button onclick="kullaniciDuzenle('sirarow-'+@item.Id)" class="btn btn-primary" data-toggle="modal" data-target="#KullaniciModal"><i class="fa fa-edit"></i>Kullanıcıyı Düzenle</button>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+

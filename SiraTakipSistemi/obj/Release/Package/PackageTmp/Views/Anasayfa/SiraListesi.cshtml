@@ -1,0 +1,169 @@
+﻿@model List<SiraTakipSistemi.Models.SeferListesi>
+@using SiraTakipSistemi.Models
+@{
+    ViewBag.Title = "SiraListesi";
+    Layout = "~/Views/Shared/_Home.cshtml";
+
+}
+
+<section class="content">
+    <div class="container-fluid">
+        @using (Ajax.BeginForm("SiraEkle", "Anasayfa", new AjaxOptions { OnSuccess = "KayitEkle", OnFailure = "Mesaj", HttpMethod = "POST" },new { id="seferform"}))
+        {
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Şöför Seçin</label>
+                        <select class="form-control select2 select2-danger" name="Soforid" data-dropdown-css-class="select2-danger" style=" width: 100%; height: 100px !important">
+                            @foreach (var item in TempData["Soforler"] as List<Sofor>)
+                            {
+                                <option value="@item.Id">@item.Plaka - @item.Ad</option>
+                            }
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Not Girin</label>
+                        <input type="text" name="Not" class="form-control" placeholder="Sıra İçin Not">
+                    </div>
+                </div>
+                <div class="col-md-3" style="padding-top: 2%;">
+                    <button type="submit" class="btn btn-block btn-outline-success">Sıra Oluştur</button>
+                </div>
+            </div>
+        }
+
+        <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 padding10">
+                <table id="tblLocations" class="table- " cellpadding="0" cellspacing="0" border="1">
+                    <tr>
+                        <th>Sıra No</th>
+                        <th>Plaka</th>
+                        <th>Not</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>İşlemler</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="sirarow-@item.Id">
+                            <td style="display:none">@item.Id</td>
+                            <td width="8%" id="sira-@item.SiraNo">@item.SiraNo</td>
+                            <td width="15%">@item.Sofor.Plaka - @item.Sofor.Ad</td>
+                            <td>@item.Not</td>
+                            <td width="15%">@item.SeferZamani</td>
+                            <td width="25%">
+                                <a class="btn btn-outline-success" data-ajax="true" data-ajax-failure="SatirSil" data-ajax-method="POST" data-ajax-success="SatirSil" href="/Anasayfa/SiraOnay?seferid=@item.Id">Sırayı Tamamla</a>
+                                <a class="btn btn-outline-danger" data-ajax="true" data-ajax-failure="SatirSil" data-ajax-method="POST" data-ajax-success="SatirSil" href="/Anasayfa/SiraSil?seferid=@item.Id">Kaydı Sil</a>
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+            <br />
+
+        </div>
+    </div>
+</section>
+
+
+<script type="text/javascript"> 
+  
+         function KayitEkle(data) {
+                console.log(data);
+             if (data.Status == 1) {
+            var newrow = data.Ek.split('_');
+            var row = '<tr id="sirarow-'+newrow[0]+'">'+
+'                            <td style="display:none">'+newrow[0]+'</td>'+
+'                            <td width="8%" id="sira-'+newrow[1]+'">'+newrow[1]+'</td>'+
+'                            <td width="15%">'+newrow[2]+'</td>'+
+'                            <td'+newrow[4]+'</td>'+
+'                            <td width="15%">'+newrow[4]+'</td>'+
+'                            <td width="15%">'+newrow[3]+'</td>'+
+'                            <td width="25%">'+
+'                                <a class="btn btn-outline-success" data-ajax="true" data-ajax-failure="SatirSil" data-ajax-method="POST" data-ajax-success="SatirSil" href="/Anasayfa/SiraOnay?seferid='+newrow[0]+'">Sırayı Tamamla</a>'+
+'                                <a class="btn btn-outline-danger" data-ajax="true" data-ajax-failure="SatirSil" data-ajax-method="POST" data-ajax-success="SatirSil" href="/Anasayfa/SiraSil?seferid='+newrow[0]+'">Kaydı Sil</a>'+
+'                            </td>'+
+'                        </tr>';
+                 $("#tblLocations").append(row);
+                 $("input[name=Not]").val('');
+            }
+            Mesaj(data);
+    }
+    function SatirSil(data) {
+        var fromposition = parseInt(document.querySelectorAll("#sirarow-" + data.Ek + " td")[1].innerHTML) + 1;
+        var toposition = document.querySelectorAll("table tr").length - 1;
+        while (fromposition <= toposition) {
+            if (document.querySelector("#sira-" + fromposition) != null) {
+                document.querySelector("#sira-" + fromposition).innerHTML--;
+            document.querySelector("#sira-" + fromposition).id = 'sira-' + document.querySelector("#sira-" + fromposition).innerHTML; 
+            }fromposition++; 
+        }
+        $("#sirarow-" + data.Ek).html('');
+        Mesaj(data);
+    }
+
+    $(function () {
+   
+
+        $("#tblLocations").sortable({
+            items: 'tr:not(tr:first-child)',
+            cursor: 'pointer',
+            axis: 'y',
+            dropOnEmpty: false,
+            start: function (e, ui) {
+                ui.item.addClass("selected");
+                rowbas = ui.helper[0].rowIndex;
+            },
+            stop: function (e, ui) {
+                ui.item.removeClass("selected");
+                var toposition = parseInt(ui.item[0].rowIndex);
+                var fromposition = parseInt(ui.item[0].cells[1].innerHTML);
+                if (toposition != fromposition) {
+                    $.ajax({
+                        url: '/Anasayfa/UpdateOrder',
+                        data: { fromPosition: fromposition, toPosition: toposition },
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.Status == 1) {
+                                var back = false;
+                                var y = document.querySelector("#sira-" + fromposition).id = 'sira-999';
+                                if (toposition > fromposition) {
+                                    for (var i = fromposition + 1; i <= toposition; i++) {
+                                        document.querySelector("#sira-" + i).innerHTML--;
+                                        document.querySelector("#sira-" + i).id = 'sira-' + document.querySelector("#sira-" + i).innerHTML;
+                                    }
+                                } else if (fromposition > toposition) {
+                                    for (var i = fromposition - 1; i >= toposition; i--) {
+                                        document.querySelector("#sira-" + i).innerHTML++;
+                                        document.querySelector("#sira-" + i).id = 'sira-' + document.querySelector("#sira-" + i).innerHTML;
+                                    }
+                                }
+                                var t = document.querySelector("#sira-999");
+                                t.innerHTML = toposition;
+                                t.id = 'sira-' + toposition;
+                            } 
+                            Mesaj(data);
+
+                        },
+                        error: function (data) {
+                            Mesaj(data);
+                        }
+                    });
+                }
+            },
+            receive: function (e, ui) {
+                $(this).find("tbody").append(ui.item);
+            }
+        });
+    });
+
+    $('.select2').select2();
+
+</script>

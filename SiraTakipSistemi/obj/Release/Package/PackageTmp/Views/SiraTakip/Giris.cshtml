@@ -1,0 +1,186 @@
+﻿
+@{
+    Layout = null;string user="", company="";
+    if (Request.Cookies["KullaniciAd"] != null)
+        { user = Request.Cookies["KullaniciAd"].Value.ToString(); }
+    if (Request.Cookies["FirmaId"] != null)
+        { company = Request.Cookies["FirmaId"].Value.ToString(); }
+}
+
+
+<!DOCTYPE html>
+<html lang="tr">
+<head runat="server">
+    <meta charset="utf-8" />
+    <title>Sıra Takip Sistemleri - Lojistik Araç Takibi - Şirket İçi İşlem Takibi"</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Lojistik firmalar için sira takipleri, şirket içi işleyiş takip sistemleri, isteğe bağlı güncel otomasyonlar " name="description" />
+    <meta content="Hasan Şahin - ŞAHİN TEKNOLOJİ" name="author" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <link href="~/PANEL_CSS/assets/css/simple-line-icons.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/bootstrap-switch.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/select2.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/select2-bootstrap.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/plugins.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/components.min.css" rel="stylesheet" />
+    <link href="~/PANEL_CSS/assets/css/login-4.min.css" rel="stylesheet" />
+
+</head>
+<!-- END HEAD -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+<body class="login">
+
+    <!-- BEGIN LOGO -->
+    <div class="logo">
+        <a href="/Anasayfa/Giris">
+            <img src="~/Panel_CSS/logo.png" style="margin-top:-9%" alt="" />
+        </a>
+    </div>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content" style="margin-top:-5%">
+        <!-- BEGIN LOGIN FORM -->
+        <form class="login-form" method="post" id="form1" action="/SiraTakip/Giris" style="width:150%">
+            <h3 class="form-title">Yetkili Girişi</h3>
+            <div class="alert alert-danger display-hide">
+                <button class="close" data-close="alert"></button>
+                <span>Kullanıcı Adı ve Şifreni Gir.</span>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Firma Kodu</label>
+                <div class="input-icon">
+                    <i class="fa fa-building"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Firma Kodu (Hesap Kurucularının Girmesine Gerek Yoktur.)" value="@company" name="CompanyCode" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Kullanıcı Adı</label>
+                <div class="input-icon">
+                    <i class="fa fa-user"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Kullanıcı Adı" value="@user" name="Username" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Şifre</label>
+                <div class="input-icon">
+                    <i class="fa fa-lock"></i>
+                    <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Şifre" name="Sifre" />
+                </div>
+            </div>
+            <div class="form-actions">
+                <label class="rememberme mt-checkbox mt-checkbox-outline">
+                    @if (user != "")
+                    {
+                        <input type="checkbox" name="remember" value="1" checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="remember" value="1" />
+                    }
+                    Beni Hatırla
+                    <span></span>
+                </label>
+                <button type="submit" id="button_giris" class="btn green pull-right">Giriş</button>
+            </div>
+            <div class="form-actions">
+              
+                <a onclick="takip()" style="color:white">Firma Takip Listesine Ulaşmak İçin Tıklayınız..</a>
+            </div>
+            <p>@TempData["GirisHata"]</p>
+
+            <div class="create-account">
+                <button id="register-btn" style="width: 100%;" type="button" class="btn red btn-outline">Ücretsiz Üye Ol </button>
+            </div>
+
+        </form>
+
+        <!-- END FORGOT PASSWORD FORM -->
+        <!-- BEGIN REGISTRATION FORM -->
+        <form class="register-form" method="post" action="/SiraTakip/YeniUyelik" id="uyeFormu">
+            <h3 class="form-title">Yeni Üyelik</h3>
+            <div class="alert alert-danger display-hide">
+                <button class="close" data-close="alert"></button>
+                <span>Yeni Üyelik</span>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Adınız ve Soyadınız</label>
+                <div class="input-icon">
+                    <i class="fa fa-user"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" value="@TempData["Ad"]" placeholder="Adınız ve Soyadınız" name="Ad" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Firma Adı</label>
+                <div class="input-icon">
+                    <i class="fa fa-building"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" value="@TempData["FirmaAdi"]" placeholder="Firma Adı " name="FirmaAdi" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Mail Adresiniz</label>
+                <div class="input-icon">
+                    <i class="fa fa-envelope"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" value="@TempData["Mail"]" placeholder="Mail Adresi" name="Mail" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Kullanıcı Adı</label>
+                <div class="input-icon">
+                    <i class="fa fa-user"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" value="@TempData["Username"]" placeholder="Kullanıcı Adı " name="Username" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Şifre</label>
+                <div class="input-icon">
+                    <i class="fa fa-lock"></i>
+                    <input class="form-control placeholder-no-fix" type="password" autocomplete="off" value="@TempData["Sifre"]" placeholder="Şifre" name="Sifre" />
+                </div>
+            </div>
+            <div class="form-actions" style="    writing-mode: vertical-rl;">
+
+
+                <button type="submit" id="button_giris" class="btn green pull-right">Kayıt Ol</button>
+            </div>
+
+
+            <div class="create-account">
+                <p>
+                    <button id="register-back-btn" type="button" class="btn red btn-outline">Geri </button>
+                </p>
+            </div>
+        </form>
+
+
+        <!-- END REGISTRATION FORM -->
+    </div><br />
+    <!-- END LOGIN -->
+    <!-- BEGIN COPYRIGHT -->
+    <div class="copyright">2017 ŞAHİN TEKNOLOJİ - SIRA TAKİP SİSTEMLERİ &copy; : 0 (534) 872 29 34 </div>
+    <script src="~/PANEL_CSS/assets/jquery.min.js"></script>
+
+    <script src="~/PANEL_CSS/assets/bootstrap.min.js"></script>
+    <script src="~/PANEL_CSS/assets/js.cookie.min.js"></script>
+    <script src="~/PANEL_CSS/assets/jquery.slimscroll.min.js"></script>
+    <script src="~/PANEL_CSS/assets/jquery.blockui.min.js"></script>
+
+    <script src="~/PANEL_CSS/assets/bootstrap-switch.min.js"></script>
+    <script src="~/PANEL_CSS/assets/jquery.validate.min.js"></script>
+    <script src="~/PANEL_CSS/assets/select2.full.min.js"></script>
+    <script src="~/PANEL_CSS/assets/jquery.backstretch.min.js"></script>
+    <script src="~/PANEL_CSS/assets/app.min.js"></script>
+
+    <script src="~/PANEL_CSS/assets/login-4.min.js"></script>
+    <script>
+        function takip() {
+            var companyid = prompt("Firma Kodunu Giriniz");
+            window.location = "/Firma/" + companyid;
+        }
+    </script>
+</body>
+
+</html>

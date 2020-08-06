@@ -1,0 +1,117 @@
+﻿@model List<SiraTakipSistemi.Models.Kullanici>
+
+@{
+    ViewBag.Title = "Kullanıcılar";
+    Layout = "~/Views/Shared/_Home.cshtml";
+}
+
+
+<section class="content">
+    <div class="container-fluid" id="Kullanicitablosu">
+        @Html.Partial("_KullaniciTablosu", Model)
+    </div>
+    <br />
+</section>
+
+<a style="display:none" id="resettable" data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#Kullanicitablosu" href="/Anasayfa/KullaniciActive">Şöförü Sil</a>
+
+<div class="modal fade" id="KullaniciModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content bg-secondary">
+            @using (Ajax.BeginForm("KullaniciEkle", "Anasayfa", new AjaxOptions { OnSuccess = "KullaniciEkle", OnFailure = "KullaniciEkle", HttpMethod = "POST" }, new { id = "Kullaniciform" }))
+            {
+                <div class="modal-header">
+                    <h4 class="modal-title">Şöför Ekle</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="İptal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="Id" value="0" style="display:none" />
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                        </div>
+                        <input type="text" name="Ad" class="form-control" placeholder="Ad-Soyad*">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-user-secret"></i></span>
+                        </div>
+                        <input type="text" name="Username" class="form-control" placeholder="Kullanıcı Adı*">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-key"></i></span>
+                        </div>
+                        <input type="text" name="Sifre" class="form-control" placeholder="Şifre*">
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-outline-light">Kaydet</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <p>The <strong>hide.bs.modal</strong> event occurs modal is about to be hidden.</p>
+                <p>Click the "Hide Modal" button to trigger the hide method (which will trigger the hide.bs.modal event).</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var yedek="";
+    function clearModal() {
+            $("#Kullaniciform")[0].reset();
+    }
+
+    function kullaniciDuzenle(row) {
+        yedek = row;
+        var veri = document.querySelectorAll('#' + row + ' td');
+        $("input[name=Id]").val(veri[0].innerHTML);
+        $("input[name=Ad]").val(veri[1].innerHTML);
+        $("input[name=Username]").val(veri[2].innerHTML);
+        $("input[name=Sifre]").val(veri[3].innerHTML);
+    }
+
+    function KullaniciEkle(data) {
+        if (data.Status == 1 && data.Ek2 == "0") {
+            var sira = "kullaniciDuzenle('sirarow-"+data.Ek.split('_')[0]+"')";
+var row = '<tr id="sirarow-'+data.Ek.split('_')[0]+'">'+
+'                    <td style="display:none">'+data.Ek.split('_')[0]+'</td>'+
+'                    <td width="15%">'+$("input[name=Ad]").val()+'</td>'+
+'                    <td width="15%">'+data.Ek.split('_')[1]+'</td>'+
+'                    <td width="15%">'+data.Ek.split('_')[2]+'</td>'+
+'                    <td width="25%">' +
+'                        <a class="btn btn-outline-danger" data-ajax="true" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#Kullanicitablosu" href="/Anasayfa/KullaniciActive?Kullaniciid=' + data.Ek.split('_')[0] + '&Active=-1">Sil</a>' +
+'                        <button onclick="'+sira+'" class="btn btn-primary" data-toggle="modal" data-target="#KullaniciModal"><i class="fa fa-edit"></i>Düzenle</button>' +
+'                    </td>'+
+'                </tr>';
+
+            $("#Kullanicitablo").append(row);
+            $("#Kullaniciform")[0].reset();
+        }
+        else if (data.Ek2 == "1") {
+            var veri = document.querySelectorAll('#' + yedek + ' td');
+            veri[1].innerHTML = data.Ek.split('_')[1];
+            veri[2].innerHTML = data.Ek.split('_')[2];
+            veri[3].innerHTML = data.Ek.split('_')[3];
+        }
+        Mesaj(data);
+
+    }
+</script>
